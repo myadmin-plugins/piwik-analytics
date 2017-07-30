@@ -12,7 +12,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class Plugin {
 
 	public static $name = 'Piwik Plugin';
-	public static $description = 'Allows handling of Piwik emails and honeypots';
+	public static $description = 'Allows handling of Piwik Analytics';
 	public static $help = '';
 	public static $type = 'plugin';
 
