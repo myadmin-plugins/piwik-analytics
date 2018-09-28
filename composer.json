@@ -1,5 +1,5 @@
 {
-	"name": "detain/myadmin-piwik-analytics",
+	"name": "detain/piwik-analytics",
 	"type": "myadmin-plugin",
 	"description": "Piwik handling plugin for MyAdmin",
 	"keywords": [

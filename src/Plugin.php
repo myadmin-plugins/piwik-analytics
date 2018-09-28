@@ -54,10 +54,10 @@ class Plugin
 	public static function getRequirements(GenericEvent $event)
 	{
 		$loader = $event->getSubject();
-		$loader->add_requirement('class.Piwik', '/../vendor/detain/myadmin-piwik-analytics/src/Piwik.php');
-		$loader->add_requirement('deactivate_kcare', '/../vendor/detain/myadmin-piwik-analytics/src/abuse.inc.php');
-		$loader->add_requirement('deactivate_abuse', '/../vendor/detain/myadmin-piwik-analytics/src/abuse.inc.php');
-		$loader->add_requirement('get_abuse_licenses', '/../vendor/detain/myadmin-piwik-analytics/src/abuse.inc.php');
+		$loader->add_requirement('class.Piwik', '/../vendor/detain/piwik-analytics/src/Piwik.php');
+		$loader->add_requirement('deactivate_kcare', '/../vendor/detain/piwik-analytics/src/abuse.inc.php');
+		$loader->add_requirement('deactivate_abuse', '/../vendor/detain/piwik-analytics/src/abuse.inc.php');
+		$loader->add_requirement('get_abuse_licenses', '/../vendor/detain/piwik-analytics/src/abuse.inc.php');
 	}
 
 	/**

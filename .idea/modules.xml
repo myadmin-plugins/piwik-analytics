@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/myadmin-piwik-analytics.iml" filepath="$PROJECT_DIR$/.idea/myadmin-piwik-analytics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/piwik-analytics.iml" filepath="$PROJECT_DIR$/.idea/piwik-analytics.iml" />
     </modules>
   </component>
 </project>
