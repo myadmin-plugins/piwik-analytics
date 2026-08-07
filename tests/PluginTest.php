@@ -299,13 +299,28 @@ class PluginTest extends TestCase
     }
 
     /**
-     * Verify getRequirements() calls add_requirement on the event subject.
+     * Verify that every source path getRequirements() registers resolves to a file
+     * that actually exists on disk.
+     *
      * Uses an anonymous class as a loader stub to avoid mocking vendor classes.
+     *
+     * This replaces the previous testGetRequirementsRegistersExpectedRequirements()
+     * and testGetRequirementsPathsAreNonEmptyStrings(). Those only ever inspected the
+     * registration table — that a name was present, that its path was a non-empty
+     * string — and never touched the filesystem, so they stayed green for years while
+     * every one of the four registrations pointed at src/Piwik.php or
+     * src/abuse.inc.php, files that have never existed in this package. They asserted
+     * the broken registrations were present, which made them a lock on the bug.
+     *
+     * getRequirements() now registers nothing, so this test passes vacuously. That is
+     * the correct result: the property under test is "nothing is registered that
+     * cannot be loaded", and an empty table satisfies it. The test earns its keep by
+     * failing the moment a registration is added back without the file to match.
      *
      * @covers ::getRequirements
      * @return void
      */
-    public function testGetRequirementsRegistersExpectedRequirements(): void
+    public function testEveryRegisteredRequirementSourceResolvesToAnExistingFile(): void
     {
         $recorded = [];
         $loader = new class ($recorded) {
@@ -334,45 +349,33 @@ class PluginTest extends TestCase
         $event = new GenericEvent($loader);
         Plugin::getRequirements($event);
 
-        $this->assertNotEmpty($recorded, 'getRequirements should register at least one requirement');
+        $this->assertIsArray($recorded, 'The recorded requirement table must be an array');
 
-        $names = array_column($recorded, 0);
-        $this->assertContains('class.Piwik', $names);
-        $this->assertContains('deactivate_kcare', $names);
-        $this->assertContains('deactivate_abuse', $names);
-        $this->assertContains('get_abuse_licenses', $names);
-    }
-
-    /**
-     * Verify that all paths registered by getRequirements() are non-empty strings.
-     *
-     * @covers ::getRequirements
-     * @return void
-     */
-    public function testGetRequirementsPathsAreNonEmptyStrings(): void
-    {
-        $recorded = [];
-        $loader = new class ($recorded) {
-            /** @var array<int, array{0: string, 1: string}> */
-            private array $recorded;
-
-            public function __construct(array &$recorded)
-            {
-                $this->recorded = &$recorded;
-            }
-
-            public function add_requirement(string $name, string $path): void
-            {
-                $this->recorded[] = [$name, $path];
-            }
-        };
-
-        $event = new GenericEvent($loader);
-        Plugin::getRequirements($event);
+        $packageRoot = dirname(__DIR__);
+        $selfPrefix = '../vendor/detain/myadmin-piwik-analytics/';
 
         foreach ($recorded as [$name, $path]) {
-            $this->assertIsString($path, "Path for requirement '{$name}' must be a string");
-            $this->assertNotEmpty($path, "Path for requirement '{$name}' must not be empty");
+            $relative = ltrim($path, '/');
+            $candidates = [];
+            // A path pointing back into this package resolves against the package root,
+            // so the check works in a standalone checkout as well as inside vendor/.
+            if (strpos($relative, $selfPrefix) === 0) {
+                $candidates[] = $packageRoot . '/' . substr($relative, strlen($selfPrefix));
+            }
+            // Otherwise mirror the runtime resolution done by tf.php:
+            // require_once INCLUDE_ROOT . '/' . $source
+            $candidates[] = $packageRoot . '/../../../include/' . $relative;
+
+            $existing = array_values(array_filter($candidates, 'file_exists'));
+            $this->assertNotEmpty(
+                $existing,
+                sprintf(
+                    "Requirement '%s' registers source '%s', which does not resolve to an existing file (tried: %s)",
+                    $name,
+                    $path,
+                    implode(', ', $candidates)
+                )
+            );
         }
     }
 
