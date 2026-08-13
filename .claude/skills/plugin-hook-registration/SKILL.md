@@ -1,6 +1,6 @@
 ---
 name: plugin-hook-registration
-description: Adds a new Symfony GenericEvent hook to src/Plugin.php by updating getHooks() and adding the handler method. Use when user says 'add hook', 'register event', 'listen to event', or needs a new event handler method. Do NOT use for modifying or removing existing hooks. NOTE: for a plugin's contract/behavioral tests (tests/ContractTest.php, the shared harness, composer myadmin:scaffold-tests) use the plugin-contract-tests skill instead — this skill's reflection-only guidance predates that harness.
+description: Adds a new Symfony GenericEvent hook to src/Plugin.php by updating getHooks() and adding the handler method. Use when user says 'add hook', 'register event', 'listen to event', or needs a new event handler method. Do NOT use for modifying or removing existing hooks. For a plugin's contract or behavioral tests (tests/ContractTest.php, the shared harness, composer myadmin:scaffold-tests) use the plugin-contract-tests skill instead — this skill's reflection-only guidance predates that harness.
 ---
 <!-- myadmin-contract-harness-notice -->
 > ### ⚠️ Read this before the rest of the file
